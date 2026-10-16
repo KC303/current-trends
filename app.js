@@ -135,7 +135,7 @@ function renderSheet(){
     if(s==="angefragt"||s==="in_arbeit")h+='<button class="btn ghost" data-act="back">Auftrag zurückziehen</button>';
     else h+='<button class="btn" data-act="go">'+(s==="braucht_input"?"Input ist da, weitermachen":s==="fertig"?"Nochmal beauftragen":"Agent soll das erledigen")+'</button>';
     h+='<button class="btn ghost" data-act="file">Anhang hinzufügen</button><input type="file" id="shF" hidden multiple></div>';
-    h+='<p class="muted small">Der Agent ist noch nicht verbunden. Aufträge bleiben bis dahin liegen.</p>';
+    h+='<p class="muted small">Der Agent bearbeitet Aufträge, solange dein Mac läuft.</p>';
   }
   $("#sheet").innerHTML=h;
 }
