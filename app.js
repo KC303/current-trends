@@ -12,7 +12,9 @@ function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(
 function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function pd(s){var a=s.split("-");return new Date(+a[0],+a[1]-1,+a[2])}
 function fmt(s){var d=pd(s);return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."}
-var now=new Date();now.setHours(0,0,0,0);var TODAY=iso(now);
+var now,TODAY;
+function setDay(){now=new Date();now.setHours(0,0,0,0);TODAY=iso(now)}
+setDay();
 function diff(s){return Math.round((pd(s)-now)/86400000)}
 function nf(n,d){return n.toLocaleString("de-DE",{minimumFractionDigits:d||0,maximumFractionDigits:d||0})}
 var MON=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
@@ -83,7 +85,11 @@ async function boot(){
   go((location.hash||"").replace("#",""));
 }
 document.addEventListener("visibilitychange",async function(){
-  if(document.visibilityState==="visible"&&me&&Date.now()-lastLoad>30000){if(await loadData())renderAll()}
+  if(document.visibilityState!=="visible"||!me)return;
+  var old=TODAY;setDay();
+  if(old!==TODAY){cy=now.getFullYear();cm=now.getMonth()}
+  if(Date.now()-lastLoad>30000){if(await loadData())renderAll()}
+  else if(old!==TODAY)renderAll();
 });
 
 /* ---------- Übersicht, Aufgaben, Termine ---------- */
