@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Current Trends</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Trends">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191919" media="(prefers-color-scheme: dark)">
+<style>
+:root{
+  --bg:#FFFFFF; --fg:#1D1D1F; --muted:#6E6E73; --line:#D2D2D7; --fill:#F5F5F7;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{--bg:#191919;--fg:#F5F5F7;--muted:#98989D;--line:#3A3A3C;--fill:#2C2C2E;color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-weight:600;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h1{font-size:34px;line-height:1.1}
+h2{font-size:21px}
+h3{font-size:15px}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+header{padding-block:calc(28px + env(safe-area-inset-top,0px)) 12px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.pill{display:inline-block;background:var(--fill);color:var(--muted);border-radius:980px;padding:4px 12px;font-size:12px;font-weight:500}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;background:none;border:0;padding:8px 14px;color:var(--muted);font:inherit;font-weight:500;border-radius:980px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--fill);color:var(--fg)}
+.tab:hover{color:var(--fg)}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+main{padding-block:28px 72px;display:flex;flex-direction:column;gap:32px}
+section.p{display:flex;flex-direction:column;gap:28px}
+.sub{color:var(--muted);margin-top:4px}
+.card{background:var(--fill);border-radius:18px;padding:20px;min-width:0}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:680px){.g2{grid-template-columns:1fr}}
+.stat .n{font-size:44px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .l{color:var(--muted);font-size:13px;margin-top:8px}
+@media (max-width:480px){.stat{padding:14px}.stat .n{font-size:32px}}
+.next .big{font-size:28px;font-weight:600;letter-spacing:-.01em;margin-top:6px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.row .d{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.done .t{color:var(--muted);text-decoration:line-through}
+.chk{appearance:none;flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--muted);background:transparent;cursor:pointer;position:relative;padding:0}
+.chk[aria-pressed="true"]{background:var(--fg);border-color:var(--fg)}
+.chk[aria-pressed="true"]::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.chk[disabled]{cursor:default}
+.btn{appearance:none;background:var(--fg);color:var(--bg);border:0;border-radius:980px;padding:9px 18px;font:inherit;font-weight:500;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn[disabled]{opacity:.35;cursor:default}
+input,textarea,select{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:92px;resize:vertical}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.form{display:flex;flex-direction:column;gap:12px}
+.form .two{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+@media (max-width:480px){.form .two{grid-template-columns:1fr}}
+.tile{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:var(--fg);cursor:pointer;border:0;width:100%}
+.tile .s{color:var(--muted);font-size:13px}
+.tile:hover{background:var(--line)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.cal .w{font-size:12px;color:var(--muted);text-align:center;padding:4px 0}
+.day{min-height:46px;border-radius:12px;padding:6px 4px;font-size:14px;text-align:center;position:relative;font-variant-numeric:tabular-nums}
+.day.ev::after{content:"";position:absolute;bottom:6px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--fg)}
+.day.today{background:var(--fg);color:var(--bg)}
+.day.today.ev::after{background:var(--bg)}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ib{appearance:none;background:var(--bg);border:0;border-radius:50%;width:34px;height:34px;color:var(--fg);font:inherit;cursor:pointer}
+.drop{border:1.5px dashed var(--line);border-radius:18px;padding:44px 20px;text-align:center;color:var(--muted);cursor:pointer}
+.drop.over{background:var(--fill);color:var(--fg)}
+.seg{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.bar2{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar2>i{display:block;height:100%;background:var(--fg)}
+.step{display:flex;gap:6px;flex-wrap:wrap}
+.step button{appearance:none;background:var(--bg);color:var(--muted);border:0;border-radius:980px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
+.step button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+details{border-top:1px solid var(--line);padding:12px 0}
+details:first-child{border-top:0}
+summary{cursor:pointer;font-weight:500}
+details p{margin-top:8px;color:var(--muted)}
+.q button{margin-top:10px}
+.ans{margin-top:10px;padding:12px;background:var(--bg);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+td,th{text-align:left;padding:10px 0;border-top:1px solid var(--line);font-weight:400}
+th{color:var(--muted);font-size:13px}
+.res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:4px}
+.res .n{font-size:28px;font-weight:600;letter-spacing:-.01em}
+svg text{font-family:var(--font);fill:var(--fg);font-size:13px}
+svg .m{fill:var(--muted)}
+svg .nd{fill:var(--bg);stroke:var(--line);stroke-width:1}
+svg .ln{stroke:var(--muted);stroke-width:1.2;fill:none}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:980px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.hit{appearance:none;background:none;border:0;border-top:1px solid var(--line);width:100%;text-align:left;font:inherit;color:var(--fg);cursor:pointer;padding:12px 0;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.hit:first-child{border-top:0}
+.big-text .bt{font-size:21px;line-height:1.45}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld textarea{min-height:64px}
+.viewer .adm{display:none!important}
+.center{max-width:420px;margin:0 auto;padding-top:calc(14vh + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion:no-preference){.tab,.btn,.tile{transition:background .15s,color .15s}}
+</style>
+</head>
+<body>
+
+<!-- Anmeldung -->
+<div id="login" class="wrap" hidden>
+  <div class="center form" style="gap:20px">
+    <div><h1>Current Trends</h1><p class="sub">Anmeldung mit einem Code per E-Mail</p></div>
+    <div class="card form" id="lg1">
+      <div><label for="lgMail">E-Mail-Adresse</label><input id="lgMail" type="email" autocomplete="email" autocapitalize="off"></div>
+      <button class="btn" id="lgSend">Code senden</button>
+    </div>
+    <div class="card form" id="lg2" hidden>
+      <div><label for="lgCode">Code aus der E-Mail</label><input id="lgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></div>
+      <button class="btn" id="lgOk">Anmelden</button>
+      <button class="btn ghost" id="lgBack">Andere Adresse</button>
+    </div>
+    <p class="muted small" id="lgMsg"></p>
+  </div>
+</div>
+
+<!-- Kein Zugang -->
+<div id="nope" class="wrap" hidden>
+  <div class="center form" style="gap:20px">
+    <div><h1>Kein Zugang</h1><p class="sub" id="nopeTxt"></p></div>
+    <button class="btn ghost" id="nopeOut">Abmelden</button>
+  </div>
+</div>
+
+<div id="app" hidden>
+<div class="bar"><div class="wrap"><div class="tabs" role="tablist" id="tabs"></div></div></div>
+
+<div class="wrap">
+<header>
+  <div>
+    <h1>Current Trends</h1>
+    <p class="sub">FuP Current Trends in Real Estate · WS 2026/27</p>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;flex:1;justify-content:flex-end;min-width:0">
+    <input id="gsearch" type="search" placeholder="Alles durchsuchen" aria-label="Alles durchsuchen" style="max-width:260px">
+    <button class="pill" id="who" style="border:0;cursor:pointer" title="Abmelden"></button>
+  </div>
+</header>
+
+<main>
+
+<!-- Übersicht -->
+<section class="p" data-p="uebersicht">
+  <div class="card next">
+    <div class="small muted">Nächster Termin</div>
+    <div class="big" id="nextTitle"></div>
+    <div class="muted" id="nextSub"></div>
+  </div>
+  <div class="g3">
+    <div class="card stat"><div class="n" id="s1">0</div><div class="l">Heute</div></div>
+    <div class="card stat"><div class="n" id="s2">0</div><div class="l">Nächste 7 Tage</div></div>
+    <div class="card stat"><div class="n" id="s3">0</div><div class="l">Offen</div></div>
+  </div>
+  <div>
+    <div class="hd"><h2>Aufgaben</h2><button class="btn ghost" data-go="aufgaben">Alle anzeigen</button></div>
+    <div class="card" id="ovTasks"></div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="hd"><h2>Termine</h2><button class="btn ghost" data-go="kalender">Kalender</button></div>
+      <div class="card" id="ovEvents"></div>
+    </div>
+    <div>
+      <div class="hd"><h2>Prüfungsbereitschaft</h2></div>
+      <div class="card" id="ready"></div>
+    </div>
+  </div>
+  <div>
+    <div class="hd"><h2>Bereiche</h2></div>
+    <div class="g3" id="areas"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Anwesenheit</h3>
+      <p class="muted small" style="margin-top:4px">Zu viele Fehltermine schließen von der Prüfung aus. Trag dich in jeder Session in die Liste ein.</p>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:14px">
+        <button class="ib" id="aMinus" aria-label="Weniger">−</button>
+        <span class="num" style="font-size:28px;font-weight:600" id="aVal">0</span>
+        <button class="ib" id="aPlus" aria-label="Mehr">+</button>
+        <span class="muted small">Fehltermine</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Fragen an die Dozentin</h3>
+      <div id="qList" style="margin-top:8px"></div>
+      <div class="adm" style="display:flex;gap:8px;margin-top:10px">
+        <input id="qIn" placeholder="Unklarheit notieren" aria-label="Unklarheit notieren">
+        <button class="btn" id="qAdd">Merken</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Kalender -->
+<section class="p" data-p="kalender" hidden>
+  <div><h2>Kalender</h2><p class="sub">Alle Sessions und Fristen des Fachs.</p></div>
+  <div class="g2">
+    <div class="card">
+      <div class="mh"><button class="ib" id="mPrev" aria-label="Voriger Monat">‹</button><h3 id="mName"></h3><button class="ib" id="mNext" aria-label="Nächster Monat">›</button></div>
+      <div class="cal" id="cal"></div>
+    </div>
+    <div>
+      <div class="hd"><h3 id="evHead">Termine</h3></div>
+      <div class="card" id="evList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Aufgaben -->
+<section class="p" data-p="aufgaben" hidden>
+  <div><h2>Aufgaben</h2><p class="sub">Fach: Current Trends.</p></div>
+  <div class="seg" id="tSeg">
+    <button class="tab" aria-selected="true" data-t="open">Offen</button>
+    <button class="tab" aria-selected="false" data-t="done">Erledigt</button>
+    <button class="tab adm" aria-selected="false" data-t="new">Neu</button>
+  </div>
+  <div class="card" id="taskList"></div>
+  <div class="card" id="taskNew" hidden>
+    <div class="form">
+      <div class="two">
+        <div><label for="nt">Aufgabe</label><input id="nt" placeholder="Zum Beispiel Template Case &amp; Shiller ausfüllen"></div>
+        <div><label for="nd">Datum</label><input id="nd" type="date"></div>
+      </div>
+      <div><button class="btn" id="ntAdd">Hinzufügen</button></div>
+    </div>
+  </div>
+  <div class="adm">
+    <div class="hd"><h2>Briefing-Notiz</h2></div>
+    <div class="card form">
+      <p class="muted small">Schreib nach dem Briefing die Hinweise der Dozentin hinein, eine pro Zeile. Sie werden zu Aufgaben.</p>
+      <textarea id="bn" aria-label="Briefing-Notiz" placeholder="Case &amp; Shiller nur überfliegen&#10;Anderson Street heute aus der Bibliothek holen"></textarea>
+      <div><button class="btn" id="bnAdd">Als Aufgaben übernehmen</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- Dokumente -->
+<section class="p" data-p="dokumente" hidden>
+  <div><h2>Dokumente</h2><p class="sub">Verständnis auf Deutsch, Unterrichtsversion auf Englisch zum Mitnehmen.</p></div>
+  <div id="docs" style="display:flex;flex-direction:column;gap:24px"></div>
+</section>
+
+<!-- Lernen -->
+<section class="p" data-p="lernen" hidden>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+    <div><h2>Lernen</h2><p class="sub">Kernaussagen, Begriffe, Zusammenhänge und Übungsfragen.</p></div>
+    <select id="sessF" aria-label="Session" style="max-width:200px"></select>
+  </div>
+  <div class="seg" id="lSeg">
+    <button class="tab" aria-selected="true" data-l="kern">Kernaussagen</button>
+    <button class="tab" aria-selected="false" data-l="gloss">Glossar</button>
+    <button class="tab" aria-selected="false" data-l="karte">Landkarte</button>
+    <button class="tab" aria-selected="false" data-l="fragen">Prüfungsfragen</button>
+    <button class="tab" aria-selected="false" data-l="quad">Vier Quadranten</button>
+    <button class="tab" aria-selected="false" data-l="zwei">2 Minuten</button>
+    <button class="tab" aria-selected="false" data-l="fp">5P-Skizze</button>
+  </div>
+  <div class="card" id="l-kern"></div>
+  <div class="card" id="l-gloss" hidden>
+    <input id="gs" placeholder="Begriff suchen" aria-label="Begriff suchen">
+    <div id="gl" style="margin-top:8px"></div>
+  </div>
+  <div class="card" id="l-karte" hidden></div>
+  <div class="card" id="l-fragen" hidden></div>
+  <div id="l-quad" hidden style="flex-direction:column;gap:12px">
+    <div class="card form">
+      <h3>Schock auslösen</h3>
+      <p class="muted small">Vereinfachtes Modell mit Beispielzahlen: Miete 100, Cap Rate 5 %, Baukosten 2.000, Bestand 100. Verschiebe die Regler und sieh, wie sich die vier Quadranten anpassen.</p>
+      <div><label for="q1">Nachfrage nach Fläche: <span class="num" id="q1v"></span></label><input id="q1" type="range" min="-30" max="30" step="1" value="0"></div>
+      <div><label for="q2">Cap Rate: <span class="num" id="q2v"></span></label><input id="q2" type="range" min="3" max="8" step="0.1" value="5"></div>
+      <div><label for="q3">Baukosten: <span class="num" id="q3v"></span></label><input id="q3" type="range" min="-20" max="20" step="1" value="0"></div>
+    </div>
+    <div class="card"><table><thead><tr><th></th><th>Miete</th><th>Preis</th><th>Bestand</th></tr></thead><tbody id="qt"></tbody></table><p class="muted small" id="qx" style="margin-top:12px"></p></div>
+  </div>
+  <div class="card" id="l-zwei" hidden></div>
+  <div id="l-fp" hidden style="flex-direction:column;gap:12px">
+    <div class="card form">
+      <p class="muted small">Trage für einen Fall oder ein Projekt je P ein paar Stichworte ein. Darunter entsteht die Skizze.</p>
+      <div class="fld"><label for="p1">Project: Was ist das Objekt?</label><textarea id="p1"></textarea></div>
+      <div class="fld"><label for="p2">People: Wer entscheidet, wer ist betroffen?</label><textarea id="p2"></textarea></div>
+      <div class="fld"><label for="p3">Prospects: Markt und Aussichten</label><textarea id="p3"></textarea></div>
+      <div class="fld"><label for="p4">Process: Ablauf, Zeitplan, Genehmigungen</label><textarea id="p4"></textarea></div>
+      <div class="fld"><label for="p5">Panorama: Umfeld und Makro</label><textarea id="p5"></textarea></div>
+    </div>
+    <div class="g3" id="fpv"></div>
+  </div>
+</section>
+
+<!-- Unterricht -->
+<section class="p" data-p="unterricht" hidden>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+    <div><h2>Unterricht</h2><p class="sub">Eine ruhige Ansicht für die Stunde: das Wichtigste groß, Fragen und Notizen griffbereit.</p></div>
+    <button class="btn ghost" id="bigBtn">Große Schrift</button>
+  </div>
+  <div id="ubody" style="display:flex;flex-direction:column;gap:12px">
+    <div class="card next"><div class="small muted">Nächste Session</div><div class="big" id="uNext"></div></div>
+    <div class="card bt"><h3 style="margin-bottom:8px">Merksätze</h3><div id="uMerk"></div></div>
+    <div class="card bt"><h3 style="margin-bottom:8px">Fragen an die Dozentin</h3><div id="uqList"></div></div>
+    <div class="card form"><label for="un">Meine Notizen (nur für dich)</label><textarea id="un" placeholder="Mitschrift" style="min-height:140px"></textarea></div>
+  </div>
+</section>
+
+<!-- Suche -->
+<section class="p" data-p="suche" hidden>
+  <div><h2>Suche</h2><p class="sub" id="sSub"></p></div>
+  <div class="card" id="sRes"></div>
+</section>
+
+<!-- Rechner -->
+<section class="p" data-p="rechner" hidden>
+  <div><h2>Rechner</h2><p class="sub">Cap Rate und Preis, wie bei DiPasquale &amp; Wheaton.</p></div>
+  <div class="g2">
+    <div class="card form">
+      <h3>Cap Rate berechnen</h3>
+      <div><label for="r1">Jahresmiete</label><input id="r1" type="number" inputmode="decimal" value="100" min="0"></div>
+      <div><label for="r2">Kaufpreis</label><input id="r2" type="number" inputmode="decimal" value="2000" min="1"></div>
+      <div class="res" style="grid-template-columns:1fr"><div><div class="muted small">Cap Rate</div><div class="n num" id="rc">5,00 %</div></div></div>
+    </div>
+    <div class="card form">
+      <h3>Zinsen steigen</h3>
+      <div><label for="r3">Neue Cap Rate: <span class="num" id="r3v">6,0 %</span></label><input id="r3" type="range" min="2" max="9" step="0.1" value="6"></div>
+      <div class="res" style="grid-template-columns:1fr 1fr"><div><div class="muted small">Neuer Preis</div><div class="n num" id="rp">1.667</div></div><div><div class="muted small">Veränderung</div><div class="n num" id="rd">−16,7 %</div></div></div>
+      <p class="muted small" id="rt"></p>
+    </div>
+  </div>
+  <div class="card">
+    <table><thead><tr><th></th><th>Miete</th><th>Cap Rate</th><th>Preis</th></tr></thead><tbody id="rtab"></tbody></table>
+  </div>
+</section>
+
+<!-- Upload -->
+<section class="p" data-p="upload" hidden>
+  <div><h2>Upload</h2><p class="sub">Ziehe Folien, Papers oder Buchseiten hierher oder tippe auf das Feld.</p></div>
+  <div class="card form">
+    <div><label for="ut">Ablegen in</label>
+      <select id="ut"><option value="beitr">Beiträge (zur Durchsicht, für alle sichtbar)</option><option value="main" class="adm">Dokumente (Hauptordner)</option></select></div>
+    <div><label for="utt">Titel (optional)</label><input id="utt" placeholder="Wird sonst der Dateiname"></div>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Dateien auswählen">Dateien hierher ziehen oder tippen<input type="file" id="fi" multiple hidden></div>
+  </div>
+  <div class="card" id="ul"><p class="muted">Noch nichts hochgeladen.</p></div>
+</section>
+
+</main>
+</div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
