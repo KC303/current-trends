@@ -100,9 +100,71 @@ function renderStats(){
   $("#s2").textContent=open.filter(function(k){if(!k.datum)return false;var n=diff(k.datum);return n>0&&n<=7}).length;
   $("#s3").textContent=open.length;
 }
+var STAT={offen:"Offen",angefragt:"Beauftragt",in_arbeit:"Agent arbeitet",braucht_input:"Braucht Input",fertig:"Fertig"};
+function st(k){return (k.daten&&k.daten.status)||"offen"}
 function taskRow(k){
-  return '<div class="row'+(k.erledigt?' done':'')+'"><button class="chk" data-id="'+k.id+'" aria-pressed="'+(k.erledigt?'true':'false')+'" aria-label="Erledigt"'+(isAdmin?'':' disabled')+'></button><div class="t">'+esc(k.titel)+'</div><div class="d">'+(k.datum?fmt(k.datum):'')+'</div></div>';
+  var s=st(k);
+  return '<div class="row'+(k.erledigt?' done':'')+'"><button class="chk" data-id="'+k.id+'" aria-pressed="'+(k.erledigt?'true':'false')+'" aria-label="Erledigt"'+(isAdmin?'':' disabled')+'></button><div class="t" data-task="'+k.id+'">'+esc(k.titel)+(s!=="offen"&&!k.erledigt?'<span class="st">'+STAT[s]+'</span>':'')+'</div><div class="d">'+(k.datum?fmt(k.datum):'')+'</div></div>';
 }
+
+/* Aufgaben-Detail */
+var sheetId=null;
+function openSheet(id){sheetId=id;$("#sheetBg").hidden=false;renderSheet()}
+function closeSheet(){sheetId=null;$("#sheetBg").hidden=true}
+async function saveDaten(k,patch){
+  var old=k.daten,nd=Object.assign({},k.daten||{},patch);k.daten=nd;
+  var r=await sb.from("items").update({daten:nd}).eq("id",k.id);
+  if(r.error){k.daten=old;toast("Speichern fehlgeschlagen");return false}
+  return true;
+}
+function renderSheet(){
+  var k=items.find(function(x){return x.id===sheetId});
+  if(!k){closeSheet();return}
+  var d=k.daten||{},s=st(k),h="";
+  h+='<div class="hd"><h2>'+esc(k.titel)+'</h2><button class="ib" data-act="close" aria-label="Schließen">✕</button></div>';
+  h+='<p class="muted small">'+(k.datum?'Fällig '+fmt(k.datum)+' · ':'')+STAT[s]+'</p>';
+  if(s==="braucht_input"&&d.braucht)h+='<div class="card"><h3>Was der Agent braucht</h3><p style="margin-top:6px;white-space:pre-wrap">'+esc(d.braucht)+'</p></div>';
+  if(d.ergebnis&&(d.ergebnis.url||d.ergebnis.pfad)){
+    h+='<div class="card"><h3>Ergebnis</h3><div class="row" style="border-top:0"><div class="t">'+esc(d.ergebnis.titel||"Ergebnis")+'</div>'+(d.ergebnis.url?'<a class="btn ghost" style="text-decoration:none" target="_blank" rel="noopener" href="'+esc(d.ergebnis.url)+'">Öffnen</a>':'<button class="btn ghost" data-open="'+esc(d.ergebnis.pfad)+'">Öffnen</button>')+'</div></div>';
+  }
+  var an=d.anhaenge||[];
+  if(an.length)h+='<div class="card"><h3>Anhänge</h3>'+an.map(function(a){return '<div class="row"><div class="t">'+esc(a.name)+'</div><button class="btn ghost" data-open="'+esc(a.pfad)+'">Öffnen</button></div>'}).join("")+'</div>';
+  if(isAdmin){
+    h+='<div><label for="shA">Anweisung an den Agenten (optional)</label><textarea id="shA" placeholder="Zum Beispiel: Auf Deutsch, Stichpunkte reichen">'+esc(d.anweisung||"")+'</textarea></div>';
+    h+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
+    if(s==="angefragt"||s==="in_arbeit")h+='<button class="btn ghost" data-act="back">Auftrag zurückziehen</button>';
+    else h+='<button class="btn" data-act="go">'+(s==="braucht_input"?"Input ist da, weitermachen":s==="fertig"?"Nochmal beauftragen":"Agent soll das erledigen")+'</button>';
+    h+='<button class="btn ghost" data-act="file">Anhang hinzufügen</button><input type="file" id="shF" hidden multiple></div>';
+    h+='<p class="muted small">Der Agent ist noch nicht verbunden. Aufträge bleiben bis dahin liegen.</p>';
+  }
+  $("#sheet").innerHTML=h;
+}
+$("#sheetBg").addEventListener("click",async function(e){
+  if(e.target===this){closeSheet();return}
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var k=items.find(function(x){return x.id===sheetId});if(!k)return;
+  var a=b.dataset.act;
+  if(a==="close")closeSheet();
+  else if(a==="file")$("#shF").click();
+  else if(a==="go"){var t=$("#shA");if(await saveDaten(k,{status:"angefragt",anweisung:t?t.value:"",braucht:null,angefragt_am:new Date().toISOString()})){renderSheet();renderTasks();toast("Agent beauftragt")}}
+  else if(a==="back"){if(await saveDaten(k,{status:"offen"})){renderSheet();renderTasks()}}
+});
+$("#sheet").addEventListener("change",async function(e){
+  var k=items.find(function(x){return x.id===sheetId});if(!k)return;
+  if(e.target.id==="shA"){await saveDaten(k,{anweisung:e.target.value})}
+  else if(e.target.id==="shF"){
+    var fl=Array.prototype.slice.call(e.target.files),an=((k.daten||{}).anhaenge||[]).slice();
+    for(var i=0;i<fl.length;i++){
+      var path="dokumente/aufgaben/"+Date.now()+"-"+safe(fl[i].name);
+      var r=await sb.storage.from("dateien").upload(path,fl[i],{contentType:fl[i].type||"application/octet-stream"});
+      if(r.error){toast("Upload fehlgeschlagen");continue}
+      an.push({name:fl[i].name,pfad:path});
+    }
+    await saveDaten(k,{anhaenge:an});renderSheet();
+  }
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&sheetId)closeSheet()});
+document.addEventListener("click",function(e){var t=e.target.closest("[data-task]");if(t)openSheet(t.dataset.task)});
 function renderTasks(){
   var seg=$("#tSeg .tab[aria-selected='true']");var mode=seg?seg.dataset.t:"open";
   if(mode==="new"&&!isAdmin)mode="open";
@@ -362,7 +424,7 @@ function go(k){
 }
 document.addEventListener("click",function(e){var g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
 
-function renderAll(){renderOv();renderCal();renderTasks();renderReady();ra();rq();renderDocs();renderLernen();ru()}
+function renderAll(){renderOv();renderCal();renderTasks();renderReady();ra();rq();renderDocs();renderLernen();ru();if(sheetId)renderSheet()}
 
 /* ---------- Start ---------- */
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
