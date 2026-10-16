@@ -113,8 +113,8 @@ function openSheet(id){sheetId=id;$("#sheetBg").hidden=false;renderSheet()}
 function closeSheet(){sheetId=null;$("#sheetBg").hidden=true}
 async function saveDaten(k,patch){
   var old=k.daten,nd=Object.assign({},k.daten||{},patch);k.daten=nd;
-  var r=await sb.from("items").update({daten:nd}).eq("id",k.id);
-  if(r.error){k.daten=old;toast("Speichern fehlgeschlagen");return false}
+  var r=await sb.from("items").update({daten:nd}).eq("id",k.id).select("id");
+  if(r.error||!r.data||!r.data.length){k.daten=old;toast("Speichern fehlgeschlagen: "+(r.error?r.error.message:"keine Berechtigung"));return false}
   return true;
 }
 function renderSheet(){
@@ -146,7 +146,9 @@ $("#sheetBg").addEventListener("click",async function(e){
   var a=b.dataset.act;
   if(a==="close")closeSheet();
   else if(a==="file")$("#shF").click();
-  else if(a==="go"){var t=$("#shA");if(await saveDaten(k,{status:"angefragt",anweisung:t?t.value:"",braucht:null,angefragt_am:new Date().toISOString()})){renderSheet();renderTasks();toast("Agent beauftragt")}}
+  else if(a==="go"){var t=$("#shA");b.disabled=true;b.textContent="Wird gespeichert …";
+    if(await saveDaten(k,{status:"angefragt",anweisung:t?t.value:"",braucht:null,angefragt_am:new Date().toISOString()})){renderSheet();renderTasks();toast("Agent beauftragt")}
+    else renderSheet()}
   else if(a==="back"){if(await saveDaten(k,{status:"offen"})){renderSheet();renderTasks()}}
 });
 $("#sheet").addEventListener("change",async function(e){
